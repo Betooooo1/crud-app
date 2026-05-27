@@ -9,13 +9,7 @@ app.use(express.json());
 // CORS
 // =========================
 app.use(cors({
-  origin: [
-    'http://localhost:5173',
-    'https://crud-app-git-main-betooooooo-s-projects.vercel.app',
-    'https://aplicación-crud-pi-ruby.vercel.app'
-  ],
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  credentials: true
+  origin: '*'
 }));
 
 // =========================
@@ -27,7 +21,9 @@ let productos = [];
 // GET
 // =========================
 app.get('/api/productos', (req, res) => {
+
   res.json(productos);
+
 });
 
 // =========================
@@ -43,6 +39,7 @@ app.post('/api/productos', (req, res) => {
   productos.push(nuevo);
 
   res.json(nuevo);
+
 });
 
 // =========================
@@ -53,14 +50,17 @@ app.put('/api/productos/:id', (req, res) => {
   const id = parseInt(req.params.id);
 
   productos = productos.map(p =>
+
     p.id === id
       ? { ...p, ...req.body }
       : p
+
   );
 
   res.json({
     ok: true
   });
+
 });
 
 // =========================
@@ -77,6 +77,7 @@ app.delete('/api/productos/:id', (req, res) => {
   res.json({
     ok: true
   });
+
 });
 
 // =========================
@@ -85,5 +86,9 @@ app.delete('/api/productos/:id', (req, res) => {
 const PORT = process.env.PORT || 10000;
 
 app.listen(PORT, () => {
-  console.log(`Servidor en puerto ${PORT}`);
+
+  console.log(
+    `Servidor en puerto ${PORT}`
+  );
+
 });
