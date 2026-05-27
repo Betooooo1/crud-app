@@ -1,24 +1,58 @@
 // frontend/src/components/ProductoForm.jsx
+
 import { useState, useEffect } from 'react';
 
-const EMPTY = { nombre: '', precio: '', categoria: '', stock: '' };
+const EMPTY = {
+  nombre: '',
+  precio: '',
+  categoria: '',
+  stock: ''
+};
 
-export default function ProductoForm({ onGuardar, productoEditar, onCancelar }) {
+export default function ProductoForm({
+  onGuardar,
+  productoEditar,
+  onCancelar
+}) {
+
   const [form, setForm] = useState(EMPTY);
 
-  // Detecta si el usuario hizo clic en "Editar"
+  // =========================
+  // DETECTAR EDICIÓN
+  // =========================
   useEffect(() => {
-    setForm(productoEditar || EMPTY);
+
+    if (productoEditar) {
+      setForm(productoEditar);
+    } else {
+      setForm(EMPTY);
+    }
+
   }, [productoEditar]);
 
-  const handleChange = e => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+  // =========================
+  // INPUTS
+  // =========================
+  const handleChange = (e) => {
+
+    setForm({
+      ...form,
+      [e.target.name]: e.target.value
+    });
   };
 
-  const handleSubmit = e => {
+  // =========================
+  // SUBMIT
+  // =========================
+  const handleSubmit = (e) => {
+
     e.preventDefault();
 
-    if (!form.nombre || !form.precio || !form.categoria) {
+    if (
+      !form.nombre ||
+      !form.precio ||
+      !form.categoria
+    ) {
       alert('Completa los campos obligatorios');
       return;
     }
@@ -26,18 +60,32 @@ export default function ProductoForm({ onGuardar, productoEditar, onCancelar }) 
     onGuardar({
       ...form,
       precio: parseFloat(form.precio),
-      stock: parseInt(form.stock) || 0,
+      stock: parseInt(form.stock) || 0
     });
 
     setForm(EMPTY);
   };
 
   return (
-    <form onSubmit={handleSubmit} className='producto-form'>
-      <h2>{productoEditar ? 'Editar Producto' : 'Nuevo Producto'}</h2>
 
+    <form
+      onSubmit={handleSubmit}
+      className='producto-form'
+    >
+
+      <h2>
+
+        {productoEditar
+          ? 'Editar Producto'
+          : 'Nuevo Producto'}
+
+      </h2>
+
+      {/* NOMBRE */}
       <label>
+
         Nombre *
+
         <input
           type='text'
           name='nombre'
@@ -45,11 +93,16 @@ export default function ProductoForm({ onGuardar, productoEditar, onCancelar }) 
           onChange={handleChange}
           required
         />
+
       </label>
 
+      {/* PRECIO Y STOCK */}
       <div className='form-row'>
+
         <label>
+
           Precio *
+
           <input
             type='number'
             name='precio'
@@ -58,10 +111,13 @@ export default function ProductoForm({ onGuardar, productoEditar, onCancelar }) 
             step='0.01'
             required
           />
+
         </label>
 
         <label>
+
           Stock
+
           <input
             type='number'
             name='stock'
@@ -69,36 +125,71 @@ export default function ProductoForm({ onGuardar, productoEditar, onCancelar }) 
             onChange={handleChange}
             min='0'
           />
+
         </label>
+
       </div>
 
+      {/* CATEGORÍA */}
       <label>
+
         Categoría *
+
         <select
           name='categoria'
           value={form.categoria}
           onChange={handleChange}
           required
         >
-          <option value=''>Seleccionar...</option>
-          <option>Electrónica</option>
-          <option>Periféricos</option>
-          <option>Software</option>
-          <option>Accesorios</option>
+
+          <option value=''>
+            Seleccionar...
+          </option>
+
+          <option>
+            Electrónica
+          </option>
+
+          <option>
+            Periféricos
+          </option>
+
+          <option>
+            Software
+          </option>
+
+          <option>
+            Accesorios
+          </option>
+
         </select>
+
       </label>
 
+      {/* BOTONES */}
       <div className='form-actions'>
+
         <button type='submit'>
-          {productoEditar ? 'Guardar Cambios' : 'Crear'}
+
+          {productoEditar
+            ? 'Guardar Cambios'
+            : 'Crear'}
+
         </button>
 
         {productoEditar && (
-          <button type='button' onClick={onCancelar}>
+
+          <button
+            type='button'
+            onClick={onCancelar}
+          >
             Cancelar
           </button>
+
         )}
+
       </div>
+
     </form>
   );
 }

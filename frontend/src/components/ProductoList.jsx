@@ -1,37 +1,77 @@
 // frontend/src/components/ProductoList.jsx
 
-export default function ProductoList({ productos = [], onEditar, onEliminar }) {
+export default function ProductoList({
+  productos = [],
+  onEditar,
+  onEliminar
+}) {
 
-  // Verifica que productos sea arreglo
-  if (!Array.isArray(productos) || productos.length === 0) {
+  // =========================
+  // VALIDAR ARREGLO
+  // =========================
+  if (
+    !Array.isArray(productos) ||
+    productos.length === 0
+  ) {
     return (
+
       <p className='empty'>
-        No hay productos registrados. ¡Crea el primero!
+
+        No hay productos registrados.
+        ¡Crea el primero!
+
       </p>
+
     );
   }
 
   return (
+
     <div className='grid'>
-      {productos.map(p => (
-        <div key={p.id} className='card'>
-          
+
+      {productos.map((p) => (
+
+        <div
+          key={p.id}
+          className='card'
+        >
+
+          {/* CATEGORÍA */}
           <span className='badge'>
             {p.categoria}
           </span>
 
-          <h3>{p.nombre}</h3>
+          {/* NOMBRE */}
+          <h3>
+            {p.nombre}
+          </h3>
 
+          {/* PRECIO */}
           <p className='precio'>
-            ${Number(p.precio).toFixed(2)} MXN
+
+            $
+            {Number(p.precio).toFixed(2)}
+            {' '}MXN
+
           </p>
 
+          {/* STOCK */}
           <p className='stock'>
-            Stock: {p.stock} unidades
+
+            Stock:
+            {' '}
+            {p.stock}
+            {' '}
+            unidades
+
           </p>
 
+          {/* BOTONES */}
           <div className='actions'>
-            <button onClick={() => onEditar(p)}>
+
+            <button
+              onClick={() => onEditar(p)}
+            >
               Editar
             </button>
 
@@ -41,10 +81,13 @@ export default function ProductoList({ productos = [], onEditar, onEliminar }) {
             >
               Eliminar
             </button>
+
           </div>
 
         </div>
+
       ))}
+
     </div>
   );
 }

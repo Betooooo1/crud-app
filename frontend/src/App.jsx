@@ -1,104 +1,224 @@
 // frontend/src/App.jsx
+
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+
 import ProductoForm from './components/ProductoForm';
 import ProductoList from './components/ProductoList';
+
 import './App.css';
 
+// URL del backend
 const API = import.meta.env.VITE_API_URL;
 
+console.log("API:", API);
+
 export default function App() {
+
+  // =========================
+  // ESTADOS
+  // =========================
   const [productos, setProductos] = useState([]);
   const [productoEditar, setProductoEditar] = useState(null);
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState(null);
 
-  useEffect(() => { 
-    cargar(); 
+  // =========================
+  // CARGAR AL INICIAR
+  // =========================
+  useEffect(() => {
+    cargar();
   }, []);
 
-  // READ - Cargar datos
+  // =========================
+  // READ
+  // =========================
   const cargar = async () => {
+
     setLoading(true);
-    try {
-      const { data } = await axios.get(`${API}/productos`);
-      setProductos(data);
-    } catch { 
-      notif('Error al cargar productos de la API', 'error'); 
-    } finally { 
-      setLoading(false); 
-    }
-  };
 
-  // CREATE y UPDATE - Guardar o Modificar datos
-  const guardar = async (form) => {
     try {
-      if (productoEditar) {
-        await axios.put(`${API}/productos/${productoEditar.id}`, form);
-        notif('Producto actualizado correctamente');
-        setProductoEditar(null);
+
+      const response = await axios.get(`${API}/productos`);
+
+      console.log("DATOS API:", response.data);
+
+      if (Array.isArray(response.data)) {
+        setProductos(response.data);
       } else {
-        await axios.post(`${API}/productos`, form);
-        notif('Producto creado con éxito');
+        setProductos([]);
       }
-      cargar();
-    } catch { 
-      notif('Error al guardar datos del producto', 'error'); 
+
+    } catch (error) {
+
+      console.error("ERROR API:", error);
+
+      notif('Error al cargar productos', 'error');
+
+    } finally {
+
+      setLoading(false);
+
     }
   };
 
-  // DELETE - Eliminar un dato
-  const eliminar = async (id) => {
-    if (!confirm('¿Seguro que deseas eliminar este producto?')) return;
+  // =========================
+  // CREATE / UPDATE
+  // =========================
+  const guardar = async (form) => {
+
     try {
-      await axios.delete(`${API}/productos/${id}`);
-      notif('Producto eliminado');
+
+      if (productoEditar) {
+
+        await axios.put(
+          `${API}/productos/${productoEditar.id}`,
+          form
+        );
+
+        notif('Producto actualizado');
+
+        setProductoEditar(null);
+
+      } else {
+
+        await axios.post(
+          `${API}/productos`,
+          form
+        );
+
+        notif('Producto creado');
+
+      }
+
       cargar();
-    } catch { 
-      notif('Error al eliminar el producto', 'error'); 
+
+    } catch (error) {
+
+      console.error(error);
+
+      notif('Error al guardar', 'error');
+
     }
   };
 
-  const notif = (texto, tipo = 'ok') => {
-    setMsg({ texto, tipo });
-    setTimeout(() => setMsg(null), 3000);
+  // =========================
+  // DELETE
+  // =========================
+  const eliminar = async (id) => {
+
+    const ok = confirm(
+      '¿Seguro que deseas eliminar este producto?'
+    );
+
+    if (!ok) return;
+
+    try {
+
+      await axios.delete(
+        `${API}/productos/${id}`
+      );
+
+      notif('Producto eliminado');
+
+      cargar();
+
+    } catch (error) {
+
+      console.error(error);
+
+      notif('Error al eliminar', 'error');
+
+    }
   };
 
+  // =========================
+  // ALERTAS
+  // =========================
+  const notif = (texto, tipo = 'ok') => {
+
+    setMsg({ texto, tipo });
+
+    setTimeout(() => {
+      setMsg(null);
+    }, 3000);
+  };
+
+  // =========================
+  // RENDER
+  // =========================
   return (
+
     <div className='app'>
+
       <header>
-        <h1>Gestión de Productos</h1>
-        <small>CRUD con React + Node.js + AWS — Windows 11</small>
+
+        <h1>
+          Gestión de Productos
+        </h1>
+
+        <small>
+          CRUD React + Node.js + Render + Vercel
+        </small>
+
       </header>
-      
-      {msg && <div className={`alerta ${msg.tipo}`}>{msg.texto}</div>}
-      
+
+      {msg && (
+
+        <div className={`alerta ${msg.tipo}`}>
+          {msg.texto}
+        </div>
+
+      )}
+
       <main>
+
+        {/* FORMULARIO */}
         <aside>
-          <ProductoForm 
+
+          <ProductoForm
             onGuardar={guardar}
             productoEditar={productoEditar}
-            onCancelar={() => setProductoEditar(null)} 
+            onCancelar={() => setProductoEditar(null)}
           />
+
         </aside>
-        
+
+        {/* LISTA */}
         <section>
+
           <div className='bar'>
-            <h2>Productos ({productos.length})</h2>
-            <button onClick={cargar}>↺ Actualizar</button>
+
+            <h2>
+              Productos ({productos.length})
+            </h2>
+
+            <button onClick={cargar}>
+              ↺ Actualizar
+            </button>
+
           </div>
-          
+
           {loading ? (
-            <p>Cargando información del catálogo...</p>
+
+            <p>
+              Cargando productos...
+            </p>
+
           ) : (
-            <ProductoList 
+
+            <ProductoList
               productos={productos}
-              onEditar={setProductoEditar} 
-              onEliminar={eliminar} 
+              onEditar={setProductoEditar}
+              onEliminar={eliminar}
             />
+
           )}
+
         </section>
+
       </main>
+
     </div>
   );
 }
