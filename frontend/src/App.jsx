@@ -39,7 +39,8 @@ export default function App() {
 
     try {
 
-      const response = await axios.get(`${API}/productos`);
+      // CAMBIO AQUÍ -> /api/productos
+      const response = await axios.get(`${API}/api/productos`);
 
       console.log("DATOS API:", response.data);
 
@@ -71,8 +72,9 @@ export default function App() {
 
       if (productoEditar) {
 
+        // CAMBIO AQUÍ -> /api/productos
         await axios.put(
-          `${API}/productos/${productoEditar.id}`,
+          `${API}/api/productos/${productoEditar.id}`,
           form
         );
 
@@ -82,8 +84,9 @@ export default function App() {
 
       } else {
 
+        // CAMBIO AQUÍ -> /api/productos
         await axios.post(
-          `${API}/productos`,
+          `${API}/api/productos`,
           form
         );
 
@@ -115,8 +118,9 @@ export default function App() {
 
     try {
 
+      // CAMBIO AQUÍ -> /api/productos
       await axios.delete(
-        `${API}/productos/${id}`
+        `${API}/api/productos/${id}`
       );
 
       notif('Producto eliminado');
