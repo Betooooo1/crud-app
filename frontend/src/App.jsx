@@ -8,7 +8,9 @@ import ProductoList from './components/ProductoList';
 
 import './App.css';
 
-// URL del backend
+// =========================
+// URL DEL BACKEND
+// =========================
 const API = import.meta.env.VITE_API_URL;
 
 console.log("API:", API);
@@ -39,22 +41,30 @@ export default function App() {
 
     try {
 
-      // CAMBIO AQUÍ -> /api/productos
-      const response = await axios.get(`${API}/api/productos`);
+      const response = await axios.get(
+        `${API}/api/productos`
+      );
 
       console.log("DATOS API:", response.data);
 
       if (Array.isArray(response.data)) {
+
         setProductos(response.data);
+
       } else {
+
         setProductos([]);
+
       }
 
     } catch (error) {
 
       console.error("ERROR API:", error);
 
-      notif('Error al cargar productos', 'error');
+      notif(
+        'Error al cargar productos',
+        'error'
+      );
 
     } finally {
 
@@ -70,28 +80,35 @@ export default function App() {
 
     try {
 
+      // =====================
+      // EDITAR
+      // =====================
       if (productoEditar) {
 
-        // CAMBIO AQUÍ -> /api/productos
         await axios.put(
           `${API}/api/productos/${productoEditar.id}`,
           form
         );
 
-        notif('Producto actualizado');
+        notif(
+          'Producto actualizado'
+        );
 
         setProductoEditar(null);
 
       } else {
 
-        // CAMBIO AQUÍ -> /api/productos
+        // =====================
+        // CREAR
+        // =====================
         await axios.post(
           `${API}/api/productos`,
           form
         );
 
-        notif('Producto creado');
-
+        notif(
+          'Producto creado'
+        );
       }
 
       cargar();
@@ -100,8 +117,10 @@ export default function App() {
 
       console.error(error);
 
-      notif('Error al guardar', 'error');
-
+      notif(
+        'Error al guardar',
+        'error'
+      );
     }
   };
 
@@ -118,12 +137,13 @@ export default function App() {
 
     try {
 
-      // CAMBIO AQUÍ -> /api/productos
       await axios.delete(
         `${API}/api/productos/${id}`
       );
 
-      notif('Producto eliminado');
+      notif(
+        'Producto eliminado'
+      );
 
       cargar();
 
@@ -131,20 +151,30 @@ export default function App() {
 
       console.error(error);
 
-      notif('Error al eliminar', 'error');
-
+      notif(
+        'Error al eliminar',
+        'error'
+      );
     }
   };
 
   // =========================
   // ALERTAS
   // =========================
-  const notif = (texto, tipo = 'ok') => {
+  const notif = (
+    texto,
+    tipo = 'ok'
+  ) => {
 
-    setMsg({ texto, tipo });
+    setMsg({
+      texto,
+      tipo
+    });
 
     setTimeout(() => {
+
       setMsg(null);
+
     }, 3000);
   };
 
@@ -177,18 +207,24 @@ export default function App() {
 
       <main>
 
-        {/* FORMULARIO */}
+        {/* =====================
+            FORMULARIO
+        ====================== */}
         <aside>
 
           <ProductoForm
             onGuardar={guardar}
             productoEditar={productoEditar}
-            onCancelar={() => setProductoEditar(null)}
+            onCancelar={() =>
+              setProductoEditar(null)
+            }
           />
 
         </aside>
 
-        {/* LISTA */}
+        {/* =====================
+            LISTA
+        ====================== */}
         <section>
 
           <div className='bar'>

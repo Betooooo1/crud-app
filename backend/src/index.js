@@ -1,24 +1,89 @@
-// backend/src/index.js
-const express = require('express');
-const cors    = require('cors');
-require('dotenv').config();
+import express from 'express';
+import cors from 'cors';
 
-const productosRouter = require('./routes/productos');
-const app  = express();
-const PORT = process.env.PORT || 3001;
+const app = express();
 
-// Configuración de Middlewares
-app.use(cors({ origin: process.env.FRONTEND_URL || '*' })); // Permite solicitudes del front
-app.use(express.json()); // Permite al servidor procesar JSON en el cuerpo de peticiones
+app.use(express.json());
 
-// Rutas base globales
-app.use('/api/productos', productosRouter);
+// =========================
+// CORS
+// =========================
+app.use(cors({
+  origin: [
+    'http://localhost:5173',
+    'https://crud-app-git-main-betooooooo-s-projects.vercel.app',
+    'https://aplicación-crud-pi-ruby.vercel.app'
+  ],
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true
+}));
 
-// Ruta de diagnóstico (Health Check)
-app.get('/health', (req, res) => {
-  res.json({ status: 'ok', os: 'windows', ts: new Date().toISOString() });
+// =========================
+// BASE DE DATOS TEMPORAL
+// =========================
+let productos = [];
+
+// =========================
+// GET
+// =========================
+app.get('/api/productos', (req, res) => {
+  res.json(productos);
 });
 
+// =========================
+// POST
+// =========================
+app.post('/api/productos', (req, res) => {
+
+  const nuevo = {
+    id: Date.now(),
+    ...req.body
+  };
+
+  productos.push(nuevo);
+
+  res.json(nuevo);
+});
+
+// =========================
+// PUT
+// =========================
+app.put('/api/productos/:id', (req, res) => {
+
+  const id = parseInt(req.params.id);
+
+  productos = productos.map(p =>
+    p.id === id
+      ? { ...p, ...req.body }
+      : p
+  );
+
+  res.json({
+    ok: true
+  });
+});
+
+// =========================
+// DELETE
+// =========================
+app.delete('/api/productos/:id', (req, res) => {
+
+  const id = parseInt(req.params.id);
+
+  productos = productos.filter(
+    p => p.id !== id
+  );
+
+  res.json({
+    ok: true
+  });
+});
+
+// =========================
+// SERVER
+// =========================
+const PORT = process.env.PORT || 10000;
+
 app.listen(PORT, () => {
-  console.log(`Servidor corriendo en: http://localhost:${PORT}`);
+  console.log(`Servidor en puerto ${PORT}`);
 });
